@@ -70,7 +70,7 @@ export const getPosts = async (
       await Post.find()
         .populate(
           "user",
-          "name email"
+          "name email profileImage"
         )
         .sort({
           createdAt: -1,
