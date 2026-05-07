@@ -1,6 +1,6 @@
 import User from "../model/user.model.js";
 import fs from "fs";
-import cloudinary from "cloudinary";
+import cloudinary from "../config/cloudinary.js";
 
 export const savePushToken = async (req, res) => {
 

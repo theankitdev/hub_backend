@@ -16,6 +16,6 @@ router.post(
     createPost
 );
 router.get("/", getPosts);
-router.put("/:id/like", protect, likePost);
+router.put("/like/:id", protect, likePost);
 
 export default router;
