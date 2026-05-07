@@ -8,7 +8,7 @@ const router = express.Router();
 router.post("/save-token", protect, savePushToken);
 router.get("/all", protect, getAllUsers);
 router.put(
-  "/profile",
+  "/update",
   protect,
   upload.single("profileImage"),
   updateProfile
