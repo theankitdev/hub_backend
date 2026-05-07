@@ -5,7 +5,7 @@ export const createPost = async (req, res) => {
         const post = await Post.create({
             user: req.user._id,
             text: req.body.text,
-            image: req.body.image,
+            image: req.file ? req.file.path : null,
         });
 
         res.status(201).json(post);
@@ -21,6 +21,7 @@ export const getPosts = async (req, res) => {
         const posts = await Post.find()
             .populate("user", "name email")
             .sort({ createdAt: -1 });
+
         res.json(posts);
     } catch (error) {
         res.status(500).json({
@@ -43,7 +44,8 @@ export const likePost = async (req, res) => {
 
         if (alreadyLiked) {
             post.likes = post.likes.filter(
-                (id) => id.toString() !== req.user._id.toString()
+                (id) =>
+                    id.toString() !== req.user._id.toString()
             );
         } else {
             post.likes.push(req.user._id);

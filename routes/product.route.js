@@ -4,10 +4,15 @@ import {
   createProduct,
   getProducts,
 } from "../controllers/product.controller.js";
+import upload from "../middleware/multer.js";
 
 const router = express.Router();
 
-router.post("/", protect, createProduct);
+router.post(
+  "/",
+  upload.single("image"),
+  createProduct
+);
 router.get("/", getProducts);
 
 export default router;

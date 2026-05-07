@@ -5,10 +5,16 @@ import {
   getPosts,
   likePost,
 } from "../controllers/post.controller.js";
+import upload from "../middleware/multer.js"
 
 const router = express.Router();
 
-router.post("/", protect, createPost);
+router.post(
+    "/",
+    protect,
+    upload.single("image"),
+    createPost
+);
 router.get("/", getPosts);
 router.put("/:id/like", protect, likePost);
 

@@ -15,9 +15,6 @@ uploads
 dist
 build
 
-# expo
-.expo
-.expo-shared
 
 # logs
 npm-debug.log*

@@ -7,6 +7,7 @@ import routes from "./routes/index.js";
 import cookieParser from "cookie-parser";
 import http from 'http'
 import { initSocket } from "./config/socket.js";
+import path from "path";
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.use(
     })
 )
 
+app.use("/uploads", express.static("uploads"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(cookieParser());
