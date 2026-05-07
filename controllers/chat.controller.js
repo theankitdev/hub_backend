@@ -87,49 +87,95 @@ export const getMessages = async (req, res) => {
 };
 
 
-export const getChatList = async (req, res) => {
+export const getChatList = async (
+  req,
+  res
+) => {
   try {
-    const userId = req.user._id;
+    const userId =
+      req.user._id.toString();
 
-    const messages = await Message.find({
-      $or: [{ sender: userId }, { receiver: userId }],
-    })
-      .populate("sender", "name profileImage")
-      .populate("receiver", "name profileImage")
-      .sort({ createdAt: -1 }); // newest first
+    const users =
+      await User.find({
+        _id: { $ne: userId },
+      }).select(
+        "name profileImage"
+      );
 
-    const chatMap = new Map();
+    const messages =
+      await Message.find({
+        $or: [
+          { sender: userId },
+          { receiver: userId },
+        ],
+      }).sort({
+        createdAt: -1,
+      });
 
-    for (const msg of messages) {
-      const otherUser =
-        msg.sender._id.toString() === userId.toString()
-          ? msg.receiver
-          : msg.sender;
+    const chatList = users.map(
+      (user) => {
+        const lastMessage =
+          messages.find(
+            (msg) =>
+              (msg.sender.toString() ===
+                userId &&
+                msg.receiver.toString() ===
+                  user._id.toString()) ||
+              (msg.receiver.toString() ===
+                userId &&
+                msg.sender.toString() ===
+                  user._id.toString())
+          );
 
-      const otherId = otherUser._id.toString();
-
-    
-      if (otherId === userId.toString()) continue;
-
-      if (!chatMap.has(otherId)) {
-        chatMap.set(otherId, {
+        return {
           user: {
-            _id: otherUser._id,
-            name: otherUser.name,
-            profileImage: otherUser.profileImage ?? null,
+            _id: user._id,
+            name: user.name,
+            profileImage:
+              user.profileImage ||
+              null,
           },
-          lastMessage: msg.text,
-          lastMessageTime: msg.createdAt,
-          unread: false, 
-        });
+
+          lastMessage:
+            lastMessage?.text || "",
+
+          lastMessageTime:
+            lastMessage?.createdAt ||
+            null,
+
+          unread: false,
+        };
       }
-    }
+    );
 
-    const chatList = Array.from(chatMap.values());
+    chatList.sort((a, b) => {
+      if (!a.lastMessageTime)
+        return 1;
 
-    res.json({ success: true, chatList });
+      if (!b.lastMessageTime)
+        return -1;
 
+      return (
+        new Date(
+          b.lastMessageTime
+        ) -
+        new Date(
+          a.lastMessageTime
+        )
+      );
+    });
+
+    res.json({
+      success: true,
+      chatList,
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.log(error);
+
+    res.status(500).json({
+      success: false,
+      message:
+        error.message,
+    });
   }
 };
