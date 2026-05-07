@@ -2,7 +2,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-// CREATE UPLOADS FOLDER IF NOT EXISTS
+// CREATE TEMP UPLOADS FOLDER
 if (!fs.existsSync("uploads")) {
   fs.mkdirSync("uploads");
 }
